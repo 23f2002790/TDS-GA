@@ -4,26 +4,24 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch: # manual trigger
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout code
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Step 2: Set up Python (or your environment)
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.11"
 
-      # Step 3: Cache dependencies
+      # Cache dependencies with ID
       - name: Cache pip dependencies
-        id: cache-deps
+        id: cache-deps    # <- ID is used for output reference
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip
@@ -31,7 +29,7 @@ jobs:
           restore-keys: |
             cache-02984c9
 
-      # Step 4: Prime cache (check if hit/miss)
+      # Prime cache step
       - name: prime-cache-02984c9
         run: |
           if [ "${{ steps.cache-deps.outputs.cache-hit }}" == "true" ]; then
@@ -40,7 +38,5 @@ jobs:
             echo "Cache miss!"
           fi
 
-      # Step 5: Install dependencies
       - name: Install dependencies
-        run: |
-          pip install requests
+        run: pip install requests
