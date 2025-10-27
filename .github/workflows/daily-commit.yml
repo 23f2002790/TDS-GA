@@ -1,30 +1,29 @@
 name: Daily Commit Workflow
-on:
-  workflow_dispatch: # <-- This line allows you to run it manually (Step 7)
-  schedule:
-    # This cron is set to run ~2 minutes from now (UTC)
-    - cron: '58 15 * * *'
 
-# ADDED: This gives the workflow write permissions for the commit
-permissions:
-  contents: write
+on:
+  schedule:
+    # Runs every day at 09:30 UTC (3:00 PM IST)
+    - cron: '30 9 * * *'
+  workflow_dispatch:
 
 jobs:
-  daily-commit:
+  daily_commit_job:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: write  # allows git push
+
     steps:
-      - name: Checkout Repository
+      - name: Checkout repository
         uses: actions/checkout@v4
-        # ADDED: Explicitly checkout the main branch
         with:
-          ref: main 
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Create Empty Commit
+      - name: 23f2002790@ds.study.iitm.ac.in
         run: |
-          git config user.name "GitHub Actions Bot"
-          git config user.email "23f2002790@ds.study.iitm.ac.in"
-          git commit --allow-empty -m "Daily empty commit"
+          echo "Automated update: $(date)" >> daily-log.txt
+          git config --global user.name "GitHub Action Bot"
+          git config --global user.email "23f2002790@ds.study.iitm.ac.in"
+          git add daily-log.txt
+          git commit -m "Automated daily commit on $(date)" || echo "No changes to commit"
           git push
-
-      - name: Validation Step for 23f2002790@ds.study.iitm.ac.in
-        run: echo "This step validates the workflow for the user."
